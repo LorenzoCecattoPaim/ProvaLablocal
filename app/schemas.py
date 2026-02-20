@@ -28,6 +28,22 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
 
+
+class EmailVerificationSendRequest(BaseModel):
+    email: EmailStr
+    purpose: str = "signup"
+
+
+class EmailVerificationCheckRequest(BaseModel):
+    email: EmailStr
+    code: str
+    purpose: str = "signup"
+
+
+class EmailVerificationResponse(BaseModel):
+    success: bool
+    message: str
+
 # ========================
 # Profile Schemas
 # ========================
@@ -37,6 +53,12 @@ class ProfileResponse(BaseModel):
     user_id: UUID
     full_name: Optional[str] = None
     avatar_url: Optional[str] = None
+    plan: str
+    subscription_status: str
+    trial_active: bool
+    trial_expires_at: Optional[datetime] = None
+    subscription_expires_at: Optional[datetime] = None
+    hotmart_transaction_id: Optional[str] = None
     created_at: datetime
     updated_at: datetime
     
@@ -59,6 +81,7 @@ class ExerciseResponse(BaseModel):
     explanation: Optional[str] = None
     difficulty: str
     subject: str
+    is_premium: bool
     created_at: datetime
     
     class Config:
@@ -71,6 +94,7 @@ class ExerciseCreate(BaseModel):
     explanation: Optional[str] = None
     difficulty: str
     subject: str
+    is_premium: bool = False
 
 # ========================
 # Attempt Schemas
@@ -107,3 +131,13 @@ class StatsResponse(BaseModel):
 class ProgressResponse(BaseModel):
     attempts: List[AttemptResponse]
     stats: StatsResponse
+
+
+class SubscriptionStatusResponse(BaseModel):
+    plan: str
+    subscription_status: str
+    trial_active: bool
+    trial_expires_at: Optional[datetime] = None
+    subscription_expires_at: Optional[datetime] = None
+    premium_access: bool
+    upgrade_url: Optional[str] = None

@@ -1,11 +1,11 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.database import engine, Base
-from app.routers import auth, profiles, exercises, attempts
+from app.database import init_db
+from app.routers import auth, profiles, exercises, attempts, hotmart, billing
 
-# Criar tabelas no banco
-Base.metadata.create_all(bind=engine)
+# Criar tabelas e aplicar migração leve
+init_db()
 
 app = FastAPI(
     title="ProvaLab API",
@@ -33,6 +33,8 @@ app.include_router(auth.router)
 app.include_router(profiles.router)
 app.include_router(exercises.router)
 app.include_router(attempts.router)
+app.include_router(hotmart.router)
+app.include_router(billing.router)
 
 @app.get("/")
 def root():

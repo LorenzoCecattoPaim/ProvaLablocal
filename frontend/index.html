@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -11,5 +11,58 @@
 <body>
   <div id="root"></div>
   <script type="module" crossorigin src="/assets/index-BoUKTMel.js"></script>
+  <script>
+    (function () {
+      var API_URL = "http://localhost:8000";
+
+      function handleGoogleCallbackToken() {
+        var url = new URL(window.location.href);
+        var token = url.searchParams.get("google_token");
+        if (!token) return;
+
+        localStorage.setItem("access_token", token);
+        url.searchParams.delete("google_token");
+        window.history.replaceState({}, "", url.pathname + (url.search ? "?" + url.searchParams.toString() : ""));
+        window.location.assign("/dashboard");
+      }
+
+      function injectGoogleButton() {
+        var path = window.location.pathname;
+        var isAuthPage = path === "/login" || path === "/register" || path === "/cadastrar";
+        if (!isAuthPage) return;
+        if (document.getElementById("google-login-btn")) return;
+
+        var submitButton = document.querySelector('button[type="submit"]');
+        if (!submitButton) return;
+
+        var btn = document.createElement("button");
+        btn.id = "google-login-btn";
+        btn.type = "button";
+        btn.textContent = "Entrar com Google";
+        btn.style.marginTop = "12px";
+        btn.style.width = "100%";
+        btn.style.height = "44px";
+        btn.style.border = "1px solid #d9d9d9";
+        btn.style.borderRadius = "8px";
+        btn.style.background = "#fff";
+        btn.style.cursor = "pointer";
+        btn.onclick = function () {
+          window.location.href = API_URL + "/auth/google/login";
+        };
+
+        submitButton.parentElement.appendChild(btn);
+      }
+
+      handleGoogleCallbackToken();
+
+      var observer = new MutationObserver(function () {
+        injectGoogleButton();
+      });
+
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+      injectGoogleButton();
+    })();
+  </script>
 </body>
 </html>
+
